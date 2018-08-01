@@ -17,6 +17,7 @@
 		EF9C5CDD21114EF200C7563A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EF9C5CDC21114EF200C7563A /* main.m */; };
 		EF9C5CE721114EF200C7563A /* AndJummumOMUrlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EF9C5CE621114EF200C7563A /* AndJummumOMUrlTests.m */; };
 		EF9C5CF221114EF200C7563A /* AndJummumOMUrlUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = EF9C5CF121114EF200C7563A /* AndJummumOMUrlUITests.m */; };
+		EF9C5D042111701600C7563A /* AndJummumOM Url in Resources */ = {isa = PBXBuildFile; fileRef = EF9C5D032111701600C7563A /* AndJummumOM Url */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		EF9C5CED21114EF200C7563A /* AndJummumOMUrlUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AndJummumOMUrlUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9C5CF121114EF200C7563A /* AndJummumOMUrlUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AndJummumOMUrlUITests.m; sourceTree = "<group>"; };
 		EF9C5CF321114EF200C7563A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EF9C5D032111701600C7563A /* AndJummumOM Url */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "AndJummumOM Url"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 		EF9C5CBB21114EF100C7563A = {
 			isa = PBXGroup;
 			children = (
+				EF9C5D032111701600C7563A /* AndJummumOM Url */,
 				EF9C5CC621114EF100C7563A /* AndJummumOMUrl */,
 				EF9C5CE521114EF200C7563A /* AndJummumOMUrlTests */,
 				EF9C5CF021114EF200C7563A /* AndJummumOMUrlUITests */,
@@ -245,6 +248,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF9C5D042111701600C7563A /* AndJummumOM Url in Resources */,
 				EF9C5CDA21114EF200C7563A /* LaunchScreen.storyboard in Resources */,
 				EF9C5CD721114EF200C7563A /* Assets.xcassets in Resources */,
 				EF9C5CD521114EF100C7563A /* Main.storyboard in Resources */,

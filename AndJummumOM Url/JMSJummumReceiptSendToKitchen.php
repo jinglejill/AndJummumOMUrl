@@ -1,6 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue("AND_JUMMUM");
+    setConnectionValue($jummum);
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     ini_set("memory_limit","-1");
@@ -20,11 +20,11 @@
         $modifiedDeviceToken = $_POST["modifiedDeviceToken"];
         
     }
-    if(isset($_POST["maxModifiedDate"]))
-    {
-        $maxModifiedDate = $_POST["maxModifiedDate"];
-    
-    }
+//    if(isset($_POST["maxModifiedDate"]))
+//    {
+//        $maxModifiedDate = $_POST["maxModifiedDate"];
+//
+//    }
     
     
     
@@ -101,16 +101,16 @@
     $selectedRow = getSelectedRow($sql);
     if(sizeof($selectedRow)==0)
     {
-        $sql = "select UrlNoti,AlarmShop from AND_JUMMUM_OM.branch where branchID = '$branchID'";
+        $sql = "select UrlNoti,AlarmShop from $jummumOM.branch where branchID = '$branchID'";
         $selectedRow = getSelectedRow($sql);
-        $urlNoti = $selectedRow[0]["UrlNoti"];
-        $alarmShop = $selectedRow[0]["AlarmShop"];
-        if($alarmShop == 1)
+//        $urlNoti = $selectedRow[0]["UrlNoti"];
+//        $alarmShop = $selectedRow[0]["AlarmShop"];
+//        if($alarmShop == 1)
         {
             //alarmShopOff
             //query statement
             $ledStatus = 0;
-            $sql = "update AND_JUMMUM_OM.Branch set LedStatus = '$ledStatus', ModifiedUser = '$modifiedUser', ModifiedDate = '$modifiedDate' where branchID = '$branchID';";
+            $sql = "update $jummumOM.Branch set LedStatus = '$ledStatus', ModifiedUser = '$modifiedUser', ModifiedDate = '$modifiedDate' where branchID = '$branchID';";
             $ret = doQueryTask($sql);
             if($ret != "")
             {
@@ -125,44 +125,12 @@
     
     
     
-    if($status == 11)
-    {
-        
-        //get pushSync Device in jummum
-        $sql = "select * from setting where KeyName = 'DeviceTokenAdmin'";
-        $selectedRow = getSelectedRow($sql);
-        $pushSyncDeviceTokenAdmin = $selectedRow[0]["Value"];
-        $arrPushSyncDeviceTokenAdmin = array();
-        array_push($arrPushSyncDeviceTokenAdmin,$pushSyncDeviceTokenAdmin);
-        sendPushNotificationToDeviceWithPath($arrPushSyncDeviceTokenAdmin,'./../AND_JUMMUM/','jill','negotiation arrive!',0,0,1);
-        
-        
-        //alarm admin
-        $sql = "select * from setting where keyName = 'AlarmAdmin'";
-        $selectedRow = getSelectedRow($sql);
-        $alarmAdmin = $selectedRow[0]["Value"];
-        if(intval($alarmAdmin) == 1)
-        {
-            //alarmAdmin
-            //query statement
-            $ledStatus = 1;
-            $sql = "update Setting set Value = '$ledStatus', ModifiedUser = '$modifiedUser', ModifiedDate = '$modifiedDate' where KeyName = 'LedStatus';";
-            $ret = doQueryTask($sql);
-            if($ret != "")
-            {
-                mysqli_rollback($con);
-                //        putAlertToDevice();
-                echo json_encode($ret);
-                exit();
-            }
-        }
-    }
     
     
     //dataJson
     $sql = "select '$alreadyDone' as Text;";
     $sql .= "select * from receipt where receiptID = '$receiptID';";
-    $sql .= "select * from receipt where branchID = '$branchID' and modifiedDate > '$maxModifiedDate';";
+//    $sql .= "select * from receipt where branchID = '$branchID' and modifiedDate > '$maxModifiedDate';";
     $dataJson = executeMultiQueryArray($sql);
     
     
@@ -171,7 +139,7 @@
     
     //push sync to other device
     $pushSyncDeviceTokenReceiveOrder = array();
-    $sql = "select * from AND_JUMMUM_OM.device left join AND_JUMMUM_OM.Branch on AND_JUMMUM_OM.device.DbName = AND_JUMMUM_OM.Branch.DbName where branchID = '$branchID';";
+    $sql = "select * from $jummumOM.device left join $jummumOM.Branch on $jummumOM.device.DbName = $jummumOM.Branch.DbName where branchID = '$branchID';";
     $selectedRow = getSelectedRow($sql);
     for($i=0; $i<sizeof($selectedRow); $i++)
     {
@@ -191,13 +159,21 @@
     $memberID = $selectedRow[0]["MemberID"];
     
     
-    $sql = "select login.DeviceToken from login left join useraccount on login.username = useraccount.username where useraccount.UserAccountID = '$memberID' order by login.modifiedDate desc limit 1;";
+    $sql = "select login.DeviceToken,login.ModifiedDate,login.Username from useraccount left join login on useraccount.username = login.username where useraccount.UserAccountID = '$memberID' and login.status = '1' order by login.modifiedDate desc;";
     $selectedRow = getSelectedRow($sql);
     $customerDeviceToken = $selectedRow[0]["DeviceToken"];
-    $arrCustomerDeviceToken = array();
-    array_push($arrCustomerDeviceToken,$customerDeviceToken);
-    $category = "updateStatus";
-    sendPushNotificationToDeviceWithPath($arrCustomerDeviceToken,'./../AND_JUMMUM/','jill',$msg,$receiptID,$category,1);
+    $logInModifiedDate = $selectedRow[0]["ModifiedDate"];
+    $logInUsername = $selectedRow[0]["Username"];
+    $sql = "select * from login where DeviceToken = '$customerDeviceToken' and Username != '$logInUsername' and status = 1 and modifiedDate > '$logInModifiedDate';";
+    $selectedRow = getSelectedRow($sql);
+    if(sizeof($selectedRow) == 0)
+    {
+        $arrCustomerDeviceToken = array();
+        array_push($arrCustomerDeviceToken,$customerDeviceToken);
+        $category = "updateStatus";
+        sendPushNotificationToDeviceWithPath($arrCustomerDeviceToken,"./../$jummum/",'jill',$msg,$receiptID,$category,1);
+    }
+
     
     
     

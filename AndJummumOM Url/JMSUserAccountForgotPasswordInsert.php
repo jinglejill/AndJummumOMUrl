@@ -1,17 +1,18 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue($_POST["dbName"]);
+    setConnectionValue("");
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     
     
     
-    if(isset($_POST["username"]))
+    if(isset ($_POST["branchID"]) && isset($_POST["username"]))
     {
         $username = $_POST["username"];
+        $branchID = $_POST["branchID"];
     }
     $modifiedUser = $_POST["modifiedUser"];
-    $dbName = $_POST["dbName"];
+    
     
     // Check connection
     if (mysqli_connect_errno())
@@ -27,6 +28,15 @@
     
     
     
+    //get current dbName and set connection
+    $sql = "select * from $jummumOM.branch where branchID = '$branchID'";
+    $selectedRow = getSelectedRow($sql);
+    $dbName = $selectedRow[0]["DbName"];
+    setConnectionValue($dbName);
+    
+    
+    
+    
     //query statement
     $sql = "select * from userAccount where username = '$username'";
     /* execute multi query */
@@ -39,24 +49,24 @@
         $requestDate = date('Y-m-d H:i:s', time());
         $randomString = generateRandomString();
         $codeReset = password_hash($username . $requestDate . $randomString, PASSWORD_DEFAULT);//
-        $emailBody = file_get_contents('./HtmlEmailTemplateForgotPassword.html');
+        $emailBody = file_get_contents('./HtmlEmailTemplateForgotPassword.php');
         $emailBody = str_replace("#codereset#",$codeReset,$emailBody);
         
         
         
         
-        $sql = "INSERT INTO AND_JUMMUM_OM.`forgotpassword`(`CodeReset`, `Email`, `RequestDate`, `Status`, `DbName`, `ModifiedUser`, `ModifiedDate`) VALUES ('$codeReset','$username','$requestDate','1','$dbName','$modifiedUser',now())";
+        $sql = "INSERT INTO $jummumOM.`forgotpassword`(`CodeReset`, `Email`, `RequestDate`, `Status`, `DbName`, `ModifiedUser`, `ModifiedDate`) VALUES ('$codeReset','$username','$requestDate','1','$dbName','$modifiedUser',now())";
         $ret = doQueryTask($sql);
         if($ret != "")
         {
             mysqli_rollback($con);
-            putAlertToDevice();
+//            putAlertToDevice();
             echo json_encode($ret);
             exit();
         }
         
         
-        sendEmail($username,"Reset password from DEMO JUMMUM AND_JUMMUM_OM",$emailBody);
+        sendEmail($username,"Reset password from JUMMUM OM",$emailBody);
     }
     
     

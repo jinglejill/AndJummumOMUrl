@@ -1,6 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue("AND_JUMMUM");
+    setConnectionValue($jummum);
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     ini_set("memory_limit","-1");
@@ -29,22 +29,26 @@
     
     
     
-    //****-----
-    $sql2 = "select * from receipt where branchID = '$branchID' and modifiedDate > '$modifiedDate';";
+    //**** Receipt, OrderTaking, OrderNote, Dispute
+    $sql2 = "select * from receipt where branchID = '$branchID' and modifiedDate >= '$modifiedDate';";
     $selectedRow = getSelectedRow($sql2);
     
     
-    $receiptIDList = array();
-    for($i=0; $i<sizeof($selectedRow); $i++)
+    if(sizeof($selectedRow) > 0)
     {
-        array_push($receiptIDList,$selectedRow[$i]["ReceiptID"]);
-    }
-    if(sizeof($receiptIDList) > 0)
-    {
-        $receiptIDListInText = $receiptIDList[0];
-        for($i=1; $i<sizeof($receiptIDList); $i++)
+        $receiptIDList = array();
+        for($i=0; $i<sizeof($selectedRow); $i++)
         {
-            $receiptIDListInText .= "," . $receiptIDList[$i];
+            array_push($receiptIDList,$selectedRow[$i]["ReceiptID"]);
+        }
+        
+        if(sizeof($receiptIDList) > 0)
+        {
+            $receiptIDListInText = $receiptIDList[0];
+            for($i=1; $i<sizeof($receiptIDList); $i++)
+            {
+                $receiptIDListInText .= "," . $receiptIDList[$i];
+            }
         }
         
         
@@ -56,8 +60,12 @@
     {
         $sql2 .= "select * from OrderTaking where 0;";
         $sql2 .= "select * from OrderNote where 0;";
-        $sql2 .= "select * from Dispute where 0;";        
+        $sql2 .= "select * from Dispute where 0;";
     }
+    
+    
+    
+    
     $sql .= $sql2;
     //****-----
     

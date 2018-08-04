@@ -1,10 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    if($_GET["dbName"])
-    {
-        $_POST["dbName"] = $_GET["dbName"];
-    }
-    setConnectionValue($_POST["dbName"]);
+    setConnectionValue("");
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     ini_set("memory_limit","-1");
@@ -13,9 +9,9 @@
     
     
     
-    if(isset($_POST["dbName"]))
+    if (isset ($_POST["branchID"]))
     {
-        $dbName = $_POST["dbName"];
+        $branchID = $_POST["branchID"];
     }
     
     
@@ -27,6 +23,13 @@
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
     
+    
+    
+    //get current dbName and set connection
+    $sql = "select * from $jummumOM.branch where branchID = '$branchID'";
+    $selectedRow = getSelectedRow($sql);
+    $dbName = $selectedRow[0]["DbName"];
+    setConnectionValue($dbName);
     
     
     

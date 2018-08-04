@@ -1,3 +1,9 @@
+<?php
+    include_once("dbConnect.php");
+    setConnectionValue("");
+    writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
+    printAllPost();
+?>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8"/>
@@ -10,7 +16,7 @@ body {
 </style>
 </head>
 <body text="#FFFFFF" style="background-color:#FF3C4B">
-<p>&nbsp;<img class="" src="http://www.jummum.co/Android/AND_JUMMUM_OM/jummumOMLogo.png" alt="" width="120" /></p>
+<p>&nbsp;<img class="" src="http://www.jummum.co/<?=$jummumOMPath?>jummumOMLogo.png" alt="" width="120" /></p>
 <p>&nbsp;</p>
 ไม่สามารถรีเซ็ตรหัสผ่านได้ กรุณาส่งคำขอเปลี่ยนรหัสผ่านอีกครั้งหนึ่ง
 <p>&nbsp;</p>

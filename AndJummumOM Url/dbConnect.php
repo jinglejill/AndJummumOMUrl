@@ -3,9 +3,11 @@
     
     //conection variable
     $con;
-    $globalDBName;
-    $retryNo;
-
+    $jummum = "AND_JUMMUM";
+    $jummumOM = "AND_JUMMUM_OM";
+    $urlPath = "Android/";
+    $jummumPath = "$urlPath$jummum/";
+    $jummumOMPath = "$urlPath$jummumOM/";
     
     function alarmAdmin()
     {
@@ -233,17 +235,19 @@
     function setConnectionValue($dbName)
     {
         global $con;
-        global $globalDBName;
-        global $retryNo;
-        $retryNo = 100;
+        global $jummumOM;
         
         
         if($_GET['dbName'])
         {
             $dbName = $_GET['dbName'];
         }
-        $globalDBName = $dbName;
         
+        
+        if($dbName == "")
+        {
+            $dbName = $jummumOM;
+        }
         
         
         // Create connection
@@ -630,36 +634,14 @@
         return $deviceTokenAndCountNotSeenList;
     }
     
-    function writeToLogFromParentFolder($message)
-    {
-        global $globalDBName;
-        $year = date("Y")."<br>";
-        $month = date("m")."<br>";
-        $day = date("d")."<br>";
-        $logPath = './' . $globalDBName . '/TransactionLog/';
-        $logFile = 'transactionLog' . $year . $month . $day . '.log';
-        if (!file_exists($logPath)) {
-            mkdir($logPath, 0777, true);
-        }
-        $logPath = $logPath . $logFile;
-        
-        
-        if ($fp = fopen($logPath, 'at'))
-        {
-            fwrite($fp, date('c') . ' ' . $message . PHP_EOL);
-            fclose($fp);
-        }
-    }
-    
     function writeToLog($message)
     {
-        global $globalDBName;
         $year = date("Y");
         $month = date("m");
         $day = date("d");
         
         $fileName = 'transactionLog' . $year . $month . $day . '.log';
-        $filePath = './' . $globalDBName . '/TransactionLog/';
+        $filePath = './TransactionLog/';
         if (!file_exists($filePath))
         {        
             mkdir($filePath, 0777, true);
@@ -690,13 +672,12 @@
     
     function writeToErrorLog($message)
     {
-        global $globalDBName;
         $year = date("Y");
         $month = date("m");
         $day = date("d");
         
         $fileName = 'errorLog' . $year . $month . $day . '.log';
-        $filePath = './' . $globalDBName . '/TransactionLog/';
+        $filePath = './TransactionLog/';
         if (!file_exists($filePath))
         {
             mkdir($filePath, 0777, true);
@@ -939,7 +920,7 @@
 
     function sendEmail($toAddress,$subject,$body)
     {
-        require './../../phpmailermaster/PHPMailerAutoload.php';
+        require './../phpmailermaster/PHPMailerAutoload.php';
         $mail = new PHPMailer;
 //        writeToLog("phpmailer");
         //$mail->SMTPDebug = 3;                               // Enable verbose debug output

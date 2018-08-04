@@ -1,12 +1,12 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue($_POST["dbName"]);
+    setConnectionValue("");
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     
     
     
-    if(isset($_POST["settingID"]) && isset($_POST["keyName"]) && isset($_POST["value"]) && isset($_POST["type"]) && isset($_POST["remark"]) && isset($_POST["modifiedUser"]) && isset($_POST["modifiedDate"]))
+    if(isset ($_POST["branchID"]) && isset($_POST["settingID"]) && isset($_POST["keyName"]) && isset($_POST["value"]) && isset($_POST["type"]) && isset($_POST["remark"]) && isset($_POST["modifiedUser"]) && isset($_POST["modifiedDate"]))
     {
         $settingID = $_POST["settingID"];
         $keyName = $_POST["keyName"];
@@ -17,7 +17,7 @@
         $modifiedDate = $_POST["modifiedDate"];
         
         
-        $dbName = $_POST["dbName"];
+        $branchID = $_POST["branchID"];
         $modifiedDeviceToken = $_POST["modifiedDeviceToken"];
     }
     
@@ -34,6 +34,14 @@
     // Set autocommit to on
     mysqli_autocommit($con,FALSE);
     writeToLog("set auto commit to on");
+    
+    
+    
+    //get current dbName and set connection
+    $sql = "select * from $jummumOM.branch where branchID = '$branchID'";
+    $selectedRow = getSelectedRow($sql);
+    $dbName = $selectedRow[0]["DbName"];
+    setConnectionValue($dbName);
     
     
     
@@ -60,7 +68,7 @@
     
     //push sync to other device
     $pushSyncDeviceTokenReceiveOrder = array();
-    $sql = "select * from AND_JUMMUM_OM.device where dbName = '$dbName';";
+    $sql = "select * from $jummumOM.device where dbName = '$dbName';";
     $selectedRow = getSelectedRow($sql);
     for($i=0; $i<sizeof($selectedRow); $i++)
     {

@@ -1,6 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue("AND_JUMMUM_OM");
+    setConnectionValue($jummumOM);
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     
@@ -39,12 +39,12 @@
     
     
 
-    $sql = "select * from AND_JUMMUM_OM.UserAccount where username = '$username' and password = '$password'";
+    $sql = "select * from $jummumOM.UserAccount where username = '$username' and password = '$password'";
     $selectedRow = getSelectedRow($sql);
     if(sizeof($selectedRow)==0)
     {
         //download UserAccount
-        $sql = "select * from AND_JUMMUM_OM.UserAccount where 0";
+        $sql = "select * from $jummumOM.UserAccount where 0";
         writeToLog("sql = " . $sql);
         
         
@@ -61,7 +61,7 @@
     else
     {
         $branchID = $selectedRow[0]["BranchID"];
-        $sql = "select * from AND_JUMMUM_OM.Branch where BranchID = '$branchID';";
+        $sql = "select * from $jummumOM.Branch where BranchID = '$branchID';";
         $selectedRow = getSelectedRow($sql);
         $dbName = $selectedRow[0]["DbName"];
     }
@@ -85,7 +85,7 @@
     
     //device-----***********************
     //get last DbName
-    $sql = "select * from AND_JUMMUM_OM.`device` where DeviceToken = '$deviceToken'";
+    $sql = "select * from $jummumOM.`device` where DeviceToken = '$deviceToken'";
     $selectedRow = getSelectedRow($sql);
     if(sizeof($selectedRow)>0)
     {
@@ -103,7 +103,7 @@
             }
             
             
-            $sql = "delete from AND_JUMMUM_OM.`device` where DeviceToken = '$deviceToken'";
+            $sql = "delete from $jummumOM.`device` where DeviceToken = '$deviceToken'";
             $ret = doQueryTask($sql);
             if($ret != "")
             {
@@ -117,7 +117,7 @@
             
             
             //OM query statement
-            $sql = "insert into AND_JUMMUM_OM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
+            $sql = "insert into $jummumOM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
             $ret = doQueryTask($sql);
             if($ret != "")
             {
@@ -145,7 +145,7 @@
     else
     {
         //OM query statement
-        $sql = "insert into AND_JUMMUM_OM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
+        $sql = "insert into $jummumOM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
         $ret = doQueryTask($sql);
         if($ret != "")
         {
@@ -174,7 +174,7 @@
     
 
     //userAccount
-    $sql = "select * from AND_JUMMUM_OM.UserAccount where username = '$username' and password = '$password';";
+    $sql = "select * from $jummumOM.UserAccount where username = '$username' and password = '$password';";
     $selectedRow = getSelectedRow($sql);
     $userAccountID = $selectedRow[0]["UserAccountID"];
     $sqlAll = $sql;
@@ -184,7 +184,7 @@
     
     //Master table-----**********
     //build sql statement for table
-    $sql = "select * from $dbName.setting union select SettingID+1000, `KeyName`, `Value`,Type, Remark, `ModifiedUser`, `ModifiedDate` from AND_JUMMUM_OM.setting where type = 2;";
+    $sql = "select * from $dbName.setting union select SettingID+1000, `KeyName`, `Value`,Type, Remark, `ModifiedUser`, `ModifiedDate` from $jummumOM.setting where type = 2;";
     $sql .= "select * from $dbName.customerTable;";
     $sql .= "select * from $dbName.menuType;";
     $sql .= "select * from $dbName.menu;";
@@ -193,7 +193,7 @@
     
     
     //****-----
-    $sql2 = "(select AND_JUMMUM.receipt.* from AND_JUMMUM.receipt where AND_JUMMUM.receipt.branchID = '$branchID' and status in (2,5,7,8,11,12,13)) UNION (select AND_JUMMUM.receipt.* from AND_JUMMUM.receipt where branchID = '$branchID' and status = '6' order by receipt.ReceiptDate DESC, receipt.ReceiptID DESC limit 20) UNION (select AND_JUMMUM.receipt.* from AND_JUMMUM.receipt where branchID = '$branchID' and status in (9,10,14) order by receipt.ReceiptDate DESC, receipt.ReceiptID DESC limit 20);";
+    $sql2 = "(select $jummum.receipt.* from $jummum.receipt where $jummum.receipt.branchID = '$branchID' and status in (2,5,7,8,11,12,13)) UNION (select $jummum.receipt.* from $jummum.receipt where branchID = '$branchID' and status = '6' order by receipt.ReceiptDate DESC, receipt.ReceiptID DESC limit 20) UNION (select $jummum.receipt.* from $jummum.receipt where branchID = '$branchID' and status in (9,10,14) order by receipt.ReceiptDate DESC, receipt.ReceiptID DESC limit 20);";
     $selectedRow = getSelectedRow($sql2);
     
     
@@ -211,21 +211,21 @@
         }
         
         
-        $sql2 .= "select * from AND_JUMMUM.OrderTaking where receiptID in ($receiptIDListInText);";
-        $sql2 .= "select * from AND_JUMMUM.OrderNote where orderTakingID in (select orderTakingID from AND_JUMMUM.OrderTaking where receiptID in ($receiptIDListInText));";
-        $sql2 .= "select * from AND_JUMMUM.Dispute where receiptID in ($receiptIDListInText);";
+        $sql2 .= "select * from $jummum.OrderTaking where receiptID in ($receiptIDListInText);";
+        $sql2 .= "select * from $jummum.OrderNote where orderTakingID in (select orderTakingID from $jummum.OrderTaking where receiptID in ($receiptIDListInText));";
+        $sql2 .= "select * from $jummum.Dispute where receiptID in ($receiptIDListInText);";
     }
     else
     {
-        $sql2 .= "select * from AND_JUMMUM.OrderTaking where 0;";
-        $sql2 .= "select * from AND_JUMMUM.OrderNote where 0;";
-        $sql2 .= "select * from AND_JUMMUM.Dispute where 0;";
+        $sql2 .= "select * from $jummum.OrderTaking where 0;";
+        $sql2 .= "select * from $jummum.OrderNote where 0;";
+        $sql2 .= "select * from $jummum.Dispute where 0;";
     }
     $sql .= $sql2;
     //****-----
     
     
-    $sql .= "select * from AND_JUMMUM.DisputeReason where status = 1;";
+    $sql .= "select * from $jummum.DisputeReason where status = 1;";
     
     
     $sqlAll .= $sql;
@@ -233,7 +233,7 @@
     
     
     //branch-----**********
-    $sql = "select * from AND_JUMMUM_OM.Branch where branchID = '$branchID'";
+    $sql = "select * from $jummumOM.Branch where branchID = '$branchID'";
     $sqlAll .= $sql;
     //-----**********
     

@@ -1,13 +1,13 @@
 <?php
     include_once('dbConnect.php');
-    setConnectionValue("AND_JUMMUM_OM");
+    setConnectionValue($jummumOM);
     $arrBody = array(
                      'alert' => 'test'//ข้อความ
                       ,'sound' => 'default'//,//เสียงแจ้งเตือน
 //                      ,'badge' => 3 //ขึ้นข้อความตัวเลขที่ไม่ได้อ่าน
                      ,'category' => 'Print'
                       );
-    sendTestApplePushNotification('9284a675face93a9bcefb2ef8ea51929f3a3771c90e1bda204cf11180e00ef4c',$arrBody);
+    sendTestApplePushNotification('7a07f016f0b21cc16dc2b0a14c74170087e35fd0604b956bb7381c6d8d84630d',$arrBody);
     
 //    sleep(5);
 //

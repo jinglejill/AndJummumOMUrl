@@ -1,12 +1,12 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue($_POST["dbName"]);
+    setConnectionValue("");
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     
     
     
-    if (isset ($_POST["deviceID"]) && isset($_POST["deviceToken"]) && isset ($_POST["remark"]) && isset($_POST["modifiedUser"]) && isset($_POST["modifiedDate"]))
+    if (isset ($_POST["branchID"]) && isset ($_POST["deviceID"]) && isset($_POST["deviceToken"]) && isset ($_POST["remark"]) && isset($_POST["modifiedUser"]) && isset($_POST["modifiedDate"]))
     {
         $deviceID = $_POST["deviceID"];
         $deviceToken = $_POST["deviceToken"];
@@ -15,12 +15,11 @@
         $modifiedDate = $_POST["modifiedDate"];
         
         
-        $dbName = $_POST["dbName"];
+        $branchID = $_POST["branchID"];
     }
     else
     {
         $deviceToken = $_GET["deviceToken"];
-        $dbName = $_GET["dbName"];
     }
     
     
@@ -39,12 +38,16 @@
     
     
     
-    //-----
+    //get current dbName and set connection
+    $sql = "select * from $jummumOM.branch where branchID = '$branchID'";
+    $selectedRow = getSelectedRow($sql);
+    $dbName = $selectedRow[0]["DbName"];
+    setConnectionValue($dbName);
     
     
     
     //get last DbName
-    $sql = "select * from AND_JUMMUM_OM.`device` where DeviceToken = '$deviceToken'";
+    $sql = "select * from $jummumOM.`device` where DeviceToken = '$deviceToken'";
     $selectedRow = getSelectedRow($sql);
     if(sizeof($selectedRow)>0)
     {
@@ -62,7 +65,7 @@
             }
             
             
-            $sql = "delete from AND_JUMMUM_OM.`device` where DeviceToken = '$deviceToken'";
+            $sql = "delete from $jummumOM.`device` where DeviceToken = '$deviceToken'";
             $ret = doQueryTask($sql);
             if($ret != "")
             {
@@ -76,7 +79,7 @@
             
             
             //OM query statement
-            $sql = "insert into AND_JUMMUM_OM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
+            $sql = "insert into $jummumOM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
             $ret = doQueryTask($sql);
             if($ret != "")
             {
@@ -104,7 +107,7 @@
     else
     {
         //OM query statement
-        $sql = "insert into AND_JUMMUM_OM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
+        $sql = "insert into $jummumOM.`device` (`DbName`,`DeviceToken`) values('$dbName','$deviceToken')";
         $ret = doQueryTask($sql);
         if($ret != "")
         {

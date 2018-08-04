@@ -1,10 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    if($_POST["dbName"] == "")
-    {
-        $_POST["dbName"] = "AND_JUMMUM_OM";
-    }
-    setConnectionValue($_POST["dbName"]);
+    setConnectionValue($jummumOM);
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     
@@ -28,7 +24,7 @@
     
     
     //send push to jummum admin
-    $sql = "select Value from AND_JUMMUM.Setting where keyName = 'DeviceTokenAdmin'";
+    $sql = "select Value from $jummum.Setting where keyName = 'DeviceTokenAdmin'";
     $selectedRow = getSelectedRow($sql);
     $pushSyncDeviceTokenAdmin = $selectedRow[0]["Value"];
     

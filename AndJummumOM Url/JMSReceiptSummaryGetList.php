@@ -1,6 +1,6 @@
 <?php
     include_once("dbConnect.php");
-    setConnectionValue("AND_JUMMUM");
+    setConnectionValue($jummum);
     writeToLog("file: " . basename(__FILE__) . ", user: " . $_POST["modifiedUser"]);
     printAllPost();
     $dbName = $_POST["dbName"];
@@ -29,29 +29,30 @@
     $selectedRow = getSelectedRow($sql);
     
     
-    $receiptIDList = array();
-    for($i=0; $i<sizeof($selectedRow); $i++)
+    if(sizeof($selectedRow) > 0)
     {
-        array_push($receiptIDList,$selectedRow[$i]["ReceiptID"]);
-    }
-    if(sizeof($receiptIDList) > 0)
-    {
-        $receiptIDListInText = $receiptIDList[0];
-        for($i=1; $i<sizeof($receiptIDList); $i++)
+        $receiptIDList = array();
+        for($i=0; $i<sizeof($selectedRow); $i++)
         {
-            $receiptIDListInText .= "," . $receiptIDList[$i];
+            array_push($receiptIDList,$selectedRow[$i]["ReceiptID"]);
+        }
+        if(sizeof($receiptIDList) > 0)
+        {
+            $receiptIDListInText = $receiptIDList[0];
+            for($i=1; $i<sizeof($receiptIDList); $i++)
+            {
+                $receiptIDListInText .= "," . $receiptIDList[$i];
+            }
         }
         
         
         $sql .= "select * from OrderTaking where receiptID in ($receiptIDListInText);";
         $sql .= "select * from OrderNote where orderTakingID in (select orderTakingID from OrderTaking where receiptID in ($receiptIDListInText));";
-        $sql .= "select * from $dbName.receiptPrint where receiptID in ($receiptIDListInText);";
     }
     else
     {
         $sql .= "select * from OrderTaking where 0;";
-        $sql .= "select * from OrderNote where 0;";
-        $sql .= "select * from $dbName.receiptPrint where 0;";
+        $sql .= "select * from OrderNote where 0;";        
     }
     
     
